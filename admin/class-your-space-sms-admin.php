@@ -53,6 +53,7 @@ class Your_Space_Sms_Admin {
 		$this->version = $version;
 
 		add_action('add_meta_boxes_scheduledsms', array( $this, 'setup_scheduledsms_metaboxes' ));
+		add_action( 'save_post_scheduledsms', array( $this, 'save_scheduledsms_metaboxes') );
 	}
 
 	/**
@@ -98,14 +99,8 @@ class Your_Space_Sms_Admin {
 		 */
 		
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/your-space-sms-admin.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( 
-			'apline-'.$this->plugin_name, 
-			plugin_dir_url( __FILE__ ) . 'js/apline.js', 
-			array( 'jquery' ), $this->version, false );
-		
-
+		wp_enqueue_script( 'apline-'.$this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/apline.js', array( 'jquery' ), $this->version, false );
 	}
-
 	
 	/**
 	 * From define_admin_hooks to render_admin_page
@@ -119,8 +114,6 @@ class Your_Space_Sms_Admin {
 			'manage_options', 'other-settings', array( $this, 'render_admin_subpage' ));
 	}
 
-	
-
 	/**
 	 * From ys_admin_menu to trekthehimalayas-admin-display.php
 	 *
@@ -129,7 +122,6 @@ class Your_Space_Sms_Admin {
 	public function render_admin_subpage() {
 		require_once 'partials/your-space-sms-admin-subpage-display.php';
 	}
-
 	
 	/**
 	 * From define_admin_hooks to trekthehimalayas-admin-display.php
@@ -137,8 +129,6 @@ class Your_Space_Sms_Admin {
 	 * @since    1.0.0
 	 */
 	public function create_scheduledsms_cpt() {
-
-
 		/**
 		 * Post Type: scheduledsms.
 		 */
@@ -231,35 +221,7 @@ class Your_Space_Sms_Admin {
 	public function cpt_column_widths()
 	{ ?>
 		<style type="text/css">
-			.posts .column-region { width:9%; }
-			.posts .column-status { width:9%; }
-			.posts .column-permalink { width:18%; }
-			.posts .column-permalink a {
-				display: flex;
-			}
-			.posts .column-permalink .dashicons { 
-				font-size:15px;
-				display: flex;
-				align-items: center;
-				justify-content: space-around;
-				opacity: .8;
-			}
-			.posts .column-status .wrapper{
-				width:100%;
-				display:flex;
-				margin:2% 0 0 10%;
-				display: flex;
-				align-items: center;
-			}
-			.posts .column-status .wrapper .status-icon{
-				border-radius:10px;
-			}
-			.posts .column-status .wrapper .status-icon.live{
-				color:#3bd33b;
-			}
-			.posts .column-status .wrapper .status-icon.draft{
-				color:#ff2f2f;
-			}
+			/**styles moved to admin\css\your-space-sms-admin.css */
 		</style> <?php
 	}
 
@@ -274,16 +236,6 @@ class Your_Space_Sms_Admin {
 		$columns['region'] = 'region';
 		$columns['permalink'] = 'permalink';
   		return $columns;
-	}
-
-	/**
-	 * New taxonomies for all the custom functionalitites 
-	 * 
-	 * @since    1.0.0
-	 */
-	public function add_scheduledsms_taxonomies()
-	{
-		
 	}
 
 	public function setup_scheduledsms_metaboxes(){
@@ -307,127 +259,18 @@ class Your_Space_Sms_Admin {
 	public function render_sms_admin_preview_meta_box() {
 		require_once 'partials/your-space-sms-admin-preview-display.php';
 	}
-	public function scheduledsms_data_meta_box($post){
-		// Add a nonce field so we can check for it later.
-		wp_nonce_field( $this->plugin_name.'_affiliate_meta_box', $this->plugin_name.'_affiliates_meta_box_nonce' );
 
-		echo '<div class="post_type_field_containers">';
-		echo '<ul class="plugin_name_product_data_metabox">';
-	
-		echo '<li><label for="'.$this->plugin_name.'_company_name">';
-		_e( 'Company Name', $this->plugin_name.'_company_name' );
-		echo '</label>';
-		$args = array (
-	              'type'      => 'input',
-				  'subtype'	  => 'text',
-				  'id'	  => $this->plugin_name.'_company_name',
-				  'name'	  => $this->plugin_name.'_company_name',
-				  'required' => '',
-				  'get_options_list' => '',
-				  'value_type'=>'normal',
-				  'wp_data' => 'post_meta',
-				  'post_id'=> $post->ID
-	          );
-			  // this gets the post_meta value and echos back the input
-		$this->plugin_name_render_settings_field($args);
-		echo '</li><li><label for="'.$this->plugin_name.'_fullname">';
-		_e( 'Full Name', $this->plugin_name.'_fullname' );
-		echo '</label>';
-		$args = array (
-	              'type'      => 'input',
-				  'subtype'	  => 'text',
-				  'id'	  => $this->plugin_name.'_fullname',
-				  'name'	  => $this->plugin_name.'_fullname',
-				  'required' => '',
-				  'get_options_list' => '',
-				  'value_type'=>'normal',
-				  'wp_data' => 'post_meta',
-				  'post_id'=> $post->ID
-	          );
-			  // this gets the post_meta value and echos back the input
-		$this->plugin_name_render_settings_field($args);
-		echo '</li><li><label for="'.$this->plugin_name.'_email_address">';
-		_e( 'Email Address', $this->plugin_name.'_email_address' );
-		echo '</label>';
-		unset($args);
-	  	$args = array (
-	              'type'      => 'input',
-				  'subtype'	  => 'text',
-				  'id'	  => $this->plugin_name.'_email_address',
-				  'name'	  => $this->plugin_name.'_email_address',
-				  'required' => '',
-				  'get_options_list' => '',
-				  'value_type'=>'normal',
-				  'wp_data' => 'post_meta',
-				  'post_id'=> $post->ID
-	          );
-		// this gets the post_meta value and echos back the input
-		$this->plugin_name_render_settings_field($args);
-		echo '</li><li><label for="'.$this->plugin_name.'_phone_number">';
-		_e( 'Phone Number', $this->plugin_name.'_phone_number' );
-		echo '</label>';
-		unset($args);
-	  	$args = array (
-	              'type'      => 'input',
-				  'subtype'	  => 'text',
-				  'id'	  => $this->plugin_name.'_phone_number',
-				  'name'	  => $this->plugin_name.'_phone_number',
-				  'required' => '',
-				  'get_options_list' => '',
-				  'value_type'=>'normal',
-				  'wp_data' => 'post_meta',
-				  'post_id'=> $post->ID
-	          );
-		// this gets the post_meta value and echos back the input
-		$this->plugin_name_render_settings_field($args);
-		echo '</li>';
-		// provide textarea name for $_POST variable
-		$notes = get_post_meta( $post->ID, $this->plugin_name.'_notes', true );
-		
-		$args = array(
-		'textarea_name' => $this->plugin_name.'_notes',
-		); 
-		echo '<li><label for="'.$this->plugin_name.'_notes">';
-				_e( 'Notes', $this->plugin_name.'_notes' );
-				echo '</label>';
-		wp_editor( $notes, $this->plugin_name.'_notes_editor',$args); 
-		echo '</li></ul></div>';
-	
-	}
-	
-	public function plugin_name_render_settings_field($args) {
-		if($args['wp_data'] == 'option'){
-			$wp_data_value = get_option($args['name']);
-		} elseif($args['wp_data'] == 'post_meta'){
-			$wp_data_value = get_post_meta($args['post_id'], $args['name'], true );
-		}
-		
-		switch ($args['type']) {
-			case 'input':
-				$value = ($args['value_type'] == 'serialized') ? serialize($wp_data_value) : $wp_data_value;
-				if($args['subtype'] != 'checkbox'){
-					$prependStart = (isset($args['prepend_value'])) ? '<div class="input-prepend"> <span class="add-on">'.$args['prepend_value'].'</span>' : '';
-					$prependEnd = (isset($args['prepend_value'])) ? '</div>' : '';
-					$step = (isset($args['step'])) ? 'step="'.$args['step'].'"' : '';
-					$min = (isset($args['min'])) ? 'min="'.$args['min'].'"' : '';
-					$max = (isset($args['max'])) ? 'max="'.$args['max'].'"' : '';
-					if(isset($args['disabled'])){
-						// hide the actual input bc if it was just a disabled input the informaiton saved in the database would be wrong - bc it would pass empty values and wipe the actual information
-						echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'_disabled" '.$step.' '.$max.' '.$min.' name="'.$args['name'].'_disabled" size="40" disabled value="' . esc_attr($value) . '" /><input type="hidden" id="'.$args['id'].'" '.$step.' '.$max.' '.$min.' name="'.$args['name'].'" size="40" value="' . esc_attr($value) . '" />'.$prependEnd;
-					} else {
-						echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'" "'.$args['required'].'" '.$step.' '.$max.' '.$min.' name="'.$args['name'].'" size="40" value="' . esc_attr($value) . '" />'.$prependEnd;
-					}
-					/*<input required="required" '.$disabled.' type="number" step="any" id="'.$this->plugin_name.'_cost2" name="'.$this->plugin_name.'_cost2" value="' . esc_attr( $cost ) . '" size="25" /><input type="hidden" id="'.$this->plugin_name.'_cost" step="any" name="'.$this->plugin_name.'_cost" value="' . esc_attr( $cost ) . '" />*/
-					
-				} else {
-					$checked = ($value) ? 'checked' : '';
-					echo '<input type="'.$args['subtype'].'" id="'.$args['id'].'" "'.$args['required'].'" name="'.$args['name'].'" size="40" value="1" '.$checked.' />';
-				}
-				break;
-			default:
-				# code...
-				break;
-		}
+	public function save_scheduledsms_metaboxes( $post_id ) {
+		if ( ! isset( $_POST[$this->plugin_name.'_scheduledsmss_meta_box_nonce'] ) ) {return;} //nounce is set
+		if ( ! wp_verify_nonce( $_POST[$this->plugin_name.'_scheduledsmss_meta_box_nonce'], $this->plugin_name.'_scheduledsms_meta_box' ) ) {return;} //nonce is valid
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {return;} //dont save during autosave
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {return;} //check if user is supposed to save
+		update_post_meta($post_id, $this->plugin_name.'-type',sanitize_text_field( $_POST[$this->plugin_name."-type"]));
+		update_post_meta($post_id, $this->plugin_name.'-woo-action',sanitize_text_field( $_POST[$this->plugin_name."-woo-action"]));
+		update_post_meta($post_id, $this->plugin_name.'-contactform-item',sanitize_text_field( $_POST[$this->plugin_name."-contactform-item"]));
+		update_post_meta($post_id, $this->plugin_name.'-send-to',sanitize_text_field( $_POST[$this->plugin_name."-send-to"]));
+		update_post_meta($post_id, $this->plugin_name.'-agent-phone',sanitize_text_field( $_POST[$this->plugin_name."-agent-phone"]));
+		update_post_meta($post_id, $this->plugin_name.'-sms-body',wp_kses_post( $_POST[$this->plugin_name."-sms-body"]));
 	}
 
 }

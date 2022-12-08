@@ -2,3 +2,33 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+ 
+ .posts .column-region { width:9%; }
+ .posts .column-status { width:9%; }
+ .posts .column-permalink { width:18%; }
+ .posts .column-permalink a {
+     display: flex;
+ }
+ .posts .column-permalink .dashicons { 
+     font-size:15px;
+     display: flex;
+     align-items: center;
+     justify-content: space-around;
+     opacity: .8;
+ }
+ .posts .column-status .wrapper{
+     width:100%;
+     display:flex;
+     margin:2% 0 0 10%;
+     display: flex;
+     align-items: center;
+ }
+ .posts .column-status .wrapper .status-icon{
+     border-radius:10px;
+ }
+ .posts .column-status .wrapper .status-icon.live{
+     color:#3bd33b;
+ }
+ .posts .column-status .wrapper .status-icon.draft{
+     color:#ff2f2f;
+ }
