@@ -289,7 +289,11 @@ class Your_Space_Sms_Admin {
 	public function setup_scheduledsms_metaboxes(){
 		add_meta_box(
 			'scheduledsms_data_meta_box', 
-			'Meta Box Data', array($this,'render_admin_page'), 
+			'Scheduled SMS settings', array($this,'render_sms_admin_meta_box'), 
+			'scheduledsms', 'normal','high' );
+		add_meta_box(
+			'scheduledsms_preview_data_meta_box', 
+			'SMS Preview', array($this,'render_sms_admin_preview_meta_box'), 
 			'scheduledsms', 'normal','high' );
 	}
 	/**
@@ -297,8 +301,11 @@ class Your_Space_Sms_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function render_admin_page() {
+	public function render_sms_admin_meta_box() {
 		require_once 'partials/your-space-sms-admin-display.php';
+	}
+	public function render_sms_admin_preview_meta_box() {
+		require_once 'partials/your-space-sms-admin-preview-display.php';
 	}
 	public function scheduledsms_data_meta_box($post){
 		// Add a nonce field so we can check for it later.
