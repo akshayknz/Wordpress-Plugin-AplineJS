@@ -51,8 +51,9 @@ class Your_Space_Sms_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-
+		//show meta box
 		add_action('add_meta_boxes_scheduledsms', array( $this, 'setup_scheduledsms_metaboxes' ));
+		//save meta box
 		add_action( 'save_post_scheduledsms', array( $this, 'save_scheduledsms_metaboxes') );
 	}
 
@@ -99,6 +100,7 @@ class Your_Space_Sms_Admin {
 		 */
 		
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/your-space-sms-admin.js', array( 'jquery' ), $this->version, false );
+		//enqueue apline, its good for clean reactive UI
 		wp_enqueue_script( 'apline-'.$this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/apline.js', array( 'jquery' ), $this->version, false );
 	}
 	
@@ -173,9 +175,9 @@ class Your_Space_Sms_Admin {
 		$columns = array(
 			'cb' => $columns['cb'],
 			'title' => __( 'Title' ),
-			'region' => __( 'Action' ),
-			'status' => __( 'Body' ),
-			'permalink' => __( 'To Agent' ),
+			'action' => __( 'Action' ),
+			'status' => __( 'Status' ),
+			'sendingTo' => __( 'Sending to' ),
 			'date' => __( 'Date' ),
 		);
 
@@ -189,17 +191,19 @@ class Your_Space_Sms_Admin {
 	 */	
 	public function scheduledsms_posts_column( $column, $post_id )
 	{
-		if ( 'region' === $column ) {
-			echo 'Kerala';
+		if ( 'action' === $column ) {
+			$type1 = get_post_meta(get_the_ID(), $this->plugin_name . '-woo-action', true);
+			$type2 = get_post_meta(get_the_ID(), $this->plugin_name . '-contactform-item', true);
+			if( $type1 ) {
+				echo $type1;
+			}
+			if( $type2 ) {
+				echo 'Contact Form '.$type2;
+			}
 		}
-		if ( 'permalink' === $column ) {
-			$base = get_the_permalink( $post_id, array(80, 80) ); 
-			?>
-				<a href="<?= $base; ?>" target="_blank">
-					<?= basename($base); ?>
-					<span class="dashicons dashicons-external"></span>
-				</a>
-			<?php
+		if ( 'sendingTo' === $column ) {
+			$type = get_post_meta(get_the_ID(), $this->plugin_name . '-send-to', true);
+			echo ucfirst($type);
 		}
 		if ( 'status' === $column ) { 
 			$live = get_post_status($post_id) == "publish"? true : false;
@@ -233,8 +237,8 @@ class Your_Space_Sms_Admin {
 	public function smashing_scheduledsms_sortable_columns( $columns )
 	{
 		$columns['status'] = 'status';
-		$columns['region'] = 'region';
-		$columns['permalink'] = 'permalink';
+		$columns['action'] = 'action';
+		$columns['sendingTo'] = 'sendingTo';
   		return $columns;
 	}
 
